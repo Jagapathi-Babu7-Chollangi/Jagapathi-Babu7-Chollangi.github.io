@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jagapathi — Software Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FFFDD0;       /* Main page background */
+    --surface: #FFFFFF;     /* Card / container background */
+    --surface-alt: #ff1004; /* Secondary boxes */
+    --line: #0505f4;        /* Borders */
+    --ink: #151B26;         /* Primary text */
+    --ink-muted: #5B6472;   /* Secondary text */
+    --blue: #03d5ff;        /* Accent color */
+    --blue-dim:#E7EEF7;
+    --green:#2E7D5B;
+    --green-dim:#E4F1EA;
+    --amber:#9C6B1F;
+    --amber-dim:#F3ECDC;
+    --font-display:'Archivo', sans-serif;
+    --font-body:'IBM Plex Sans', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 24px;}
+  ::selection{background:var(--blue); color:#ecece9;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  /* corner-bracket motif, reused across the page as the visual signature */
+  .brackets{position:relative;}
+  .brackets::before, .brackets::after,
+  .brackets .bl, .brackets .br{
+    content:''; position:absolute; width:14px; height:14px;
+    border-color:var(--blue); border-style:solid; opacity:0.55;
+  }
+  .brackets::before{top:-1px; left:-1px; border-width:2px 0 0 2px;}
+  .brackets::after{top:-1px; right:-1px; border-width:2px 2px 0 0;}
+  .brackets .bl{bottom:-1px; left:-1px; border-width:0 0 2px 2px;}
+  .brackets .br{bottom:-1px; right:-1px; border-width:0 2px 2px 0;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(91, 240, 5, 0.732);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{display:flex; align-items:center; justify-content:space-between; height:64px;}
+  .logo{font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:-0.01em; display:flex; align-items:center; gap:8px;}
+  .logo .mark{width:9px; height:9px; background:var(--blue);}
+  .nav-links{display:flex; gap:26px; font-family:var(--font-mono); font-size:12.5px; color:var(--ink-muted);}
+  .nav-links a{transition:color .15s ease;}
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--blue);}
+  .nav-links a:focus-visible{outline:2px solid var(--blue); outline-offset:4px;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:72px 0 80px;}
+  .hero-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; color:var(--blue);
+    letter-spacing:0.06em; margin-bottom:16px; text-transform:uppercase;
+  }
+  h1{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(32px,4.6vw,48px);
+    line-height:1.1; letter-spacing:-0.015em; margin-bottom:18px;
+  }
+  h1 .u{text-decoration:underline; text-decoration-color:var(--blue); text-decoration-thickness:3px; text-underline-offset:6px;}
+  .hero-sub{font-size:16.5px; color:var(--ink-muted); max-width:480px; margin-bottom:28px;}
+  .hero-cta{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--font-mono); font-size:13px; font-weight:500;
+    padding:12px 22px; border-radius:3px; display:inline-flex; align-items:center; gap:8px;
+    transition:transform .15s ease, background .15s ease, border-color .15s ease;
+    border:1.5px solid var(--ink);
+  }
+  .btn-primary{background:var(--ink); color:var(--paper);}
+  .btn-primary:hover, .btn-primary:focus-visible{transform:translateY(-1px); background:var(--blue); border-color:var(--blue);}
+  .btn-ghost{color:var(--ink); background:transparent;}
+  .btn-ghost:hover, .btn-ghost:focus-visible{border-color:var(--blue); color:var(--blue);}
+  .btn:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+
+  /* Signature: system schematic diagram */
+  .schematic{
+    background:var(--surface); border:1px solid var(--line); padding:28px 20px 20px;
+  }
+  .schematic-label{
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-muted); text-transform:uppercase;
+    letter-spacing:0.06em; margin-bottom:10px; text-align:center;
+  }
+  .schematic svg{width:100%; height:auto; display:block;}
+  .node-label{font-family:var(--font-mono); font-size:11px; fill:var(--ink-muted); text-transform:uppercase;}
+  .node-dot{fill:var(--surface); stroke:var(--blue); stroke-width:2;}
+  .node-line{stroke:var(--blue); stroke-width:1.4; stroke-dasharray:3 4; opacity:0.7;}
+  .node-center{fill:var(--blue);}
+  .node-center-text{font-family:var(--font-mono); fill:#fff; font-size:13px; font-weight:600;}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:60px 0; border-top:1px solid var(--line);}
+  .section-head{margin-bottom:34px;}
+  .section-tag{font-family:var(--font-mono); font-size:11.5px; color:var(--blue); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;}
+  h2{font-family:var(--font-display); font-size:clamp(23px,2.8vw,28px); font-weight:700; letter-spacing:-0.01em;}
+  .section-desc{color:var(--ink-muted); max-width:600px; margin-top:10px; font-size:14.5px;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:start;}
+  .about-text p{color:var(--ink-muted); margin-bottom:16px; font-size:15px;}
+  .about-text strong{color:var(--ink); font-weight:600;}
+  .fact-list{display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line);}
+  .fact{background:var(--surface); padding:12px 16px; font-size:13px; display:flex; justify-content:space-between; gap:12px;}
+  .fact .k{font-family:var(--font-mono); color:var(--ink-muted); font-size:11px; text-transform:uppercase;}
+  .fact .v{color:var(--ink); text-align:right; font-weight:500;}
+
+  @media (max-width:760px){ .about-grid{grid-template-columns:1fr;} .hero-grid{grid-template-columns:1fr;} }
+
+ /* ---------- PROFILE PHOTO ---------- */
+  .about-header{display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin-bottom:24px;}
+  .photo-frame{
+    width:104px; height:104px; border:1px solid var(--line); background:var(--surface-alt);
+    display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;
+    position: relative;
+  }
+  .photo-frame img{width:100%; height:100%; object-fit:cover; display:none;}
+  .photo-frame img.has-photo{display:block;}
+  .photo-frame img.has-photo ~ .placeholder{display:none;}
+  .photo-frame .placeholder{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:var(--font-mono); font-size:10px; color:var(--ink-muted); text-align:center;
+  }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line);}
+  .timeline-item{background:var(--surface); padding:20px 22px;}
+  .timeline-top{display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:5px;}
+  .timeline-title{font-family:var(--font-display); font-size:16px; font-weight:700;}
+  .timeline-org{font-size:13.5px; color:var(--blue); margin-top:2px; font-weight:500;}
+  .timeline-date{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted); white-space:nowrap;}
+  .timeline-desc{color:var(--ink-muted); font-size:13.5px; margin-top:8px;}
+  .timeline-desc ul{padding-left:18px; margin-top:6px; display:flex; flex-direction:column; gap:4px;}
+
+  /* ---------- CERTIFICATIONS ---------- */
+  .cert-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .cert-card{background:var(--surface); padding:20px; display:flex; gap:14px; align-items:flex-start;}
+  .cert-badge{
+    width:36px; height:36px; background:var(--amber-dim); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--amber); font-family:var(--font-mono); font-size:12px; font-weight:600;
+  }
+  .cert-info h3{font-family:var(--font-display); font-size:14.5px; font-weight:700; margin-bottom:3px;}
+  .cert-info .issuer{font-size:12.5px; color:var(--ink-muted);}
+  .cert-info .date{font-family:var(--font-mono); font-size:11px; color:var(--amber); margin-top:6px; display:block;}
+
+  @media (max-width:760px){ .cert-grid{grid-template-columns:1fr;} }
+
+  /* ---------- SKILLS ---------- */
+  .skill-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .skill-plate{background:var(--surface); padding:20px;}
+  .skill-plate .label{font-family:var(--font-mono); font-size:12px; color:var(--green); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;}
+  .skill-plate h3{font-family:var(--font-display); font-size:15px; font-weight:700; margin-bottom:6px;}
+  .skill-plate p{font-size:12.5px; color:var(--ink-muted);}
+
+  @media (max-width:760px){ .skill-grid{grid-template-columns:1fr;} }
+  @media (min-width:761px) and (max-width:960px){ .skill-grid{grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- PROJECTS ---------- */
+  .projects-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .project-card{background:var(--surface); padding:24px; display:flex; flex-direction:column; gap:12px;}
+  .project-status{font-family:var(--font-mono); font-size:11px; color:var(--blue);}
+  .project-card h3{font-family:var(--font-display); font-size:17px; font-weight:700;}
+  .project-card p{color:var(--ink-muted); font-size:13.5px; flex:1;}
+  .tag-row{display:flex; gap:7px; flex-wrap:wrap;}
+  .tag{font-family:var(--font-mono); font-size:10.5px; color:var(--ink-muted); border:1px solid var(--line); padding:4px 9px;}
+  .project-link{font-family:var(--font-mono); font-size:12px; color:var(--blue); display:inline-flex; align-items:center; gap:6px;}
+  .project-link:hover{text-decoration:underline;}
+
+  @media (max-width:760px){ .projects-grid{grid-template-columns:1fr;} }
+
+  /* ---------- CONTACT ---------- */
+  .contact-card{background:var(--surface); border:1px solid var(--line); padding:32px; max-width:600px; position:relative;}
+  .field-row{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+  .field-row label{font-family:var(--font-mono); font-size:11px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.04em;}
+  .field-row input, .field-row textarea{
+    background:var(--paper); border:1px solid var(--line); border-radius:2px;
+    padding:12px 14px; color:var(--ink); font-family:var(--font-body); font-size:14px; resize:vertical;
+  }
+  .field-row input:focus, .field-row textarea:focus{outline:2px solid var(--blue); outline-offset:1px; border-color:var(--blue);}
+  .send-row{display:flex; align-items:center; gap:16px; margin-top:8px;}
+  .direct-links{display:flex; gap:20px; font-family:var(--font-mono); font-size:12.5px; margin-top:26px; flex-wrap:wrap;}
+  .direct-links a{color:var(--ink-muted); transition:color .15s ease;}
+  .direct-links a:hover, .direct-links a:focus-visible{color:var(--blue);}
+
+  footer{border-top:1px solid var(--line); padding:28px 0;}
+  .footer-row{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+  .footer-row p{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><span class="mark"></span>Jagapathi</div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#education">Education</a>
+      <a href="#experience">Experience</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">contact</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" style="border-top:none;">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Software Engineer</div>
+        <h1>Building reliable systems across <span class="u">cloud</span>, data &amp; secure APIs.</h1>
+        <p class="hero-sub">
+          Computer Science engineer working across Azure cloud infrastructure, MS SQL Server,
+          C# / .NET backend development, and API design &amp; testing — with a growing focus on
+          cybersecurity.
+        </p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn btn-primary">View projects</a>
+          <a href="#contact" class="btn btn-ghost">Get in touch</a>
+        </div>
+      </div>
+
+      <div class="schematic brackets" aria-hidden="false" role="img" aria-label="Diagram showing Jagapathi at the center, connected to Cloud, Cybersecurity, SQL Server, C# and .NET, and APIs and Postman">
+        <span class="bl"></span><span class="br"></span>
+        <div class="schematic-label">Core stack, mapped as a system</div>
+        <svg viewBox="0 0 640 340" xmlns="http://www.w3.org/2000/svg">
+          <line class="node-line" x1="320" y1="170" x2="320" y2="55"/>
+          <line class="node-line" x1="320" y1="170" x2="500" y2="115"/>
+          <line class="node-line" x1="320" y1="170" x2="455" y2="280"/>
+          <line class="node-line" x1="320" y1="170" x2="185" y2="280"/>
+          <line class="node-line" x1="320" y1="170" x2="140" y2="115"/>
+
+          <circle class="node-dot" cx="320" cy="55" r="7"/>
+          <text class="node-label" x="320" y="35" text-anchor="middle">CLOUD</text>
+
+          <circle class="node-dot" cx="500" cy="115" r="7"/>
+          <text class="node-label" x="510" y="105" text-anchor="start">CYBERSECURITY</text>
+
+          <circle class="node-dot" cx="455" cy="280" r="7"/>
+          <text class="node-label" x="465" y="305" text-anchor="start">SQL SERVER</text>
+
+          <circle class="node-dot" cx="185" cy="280" r="7"/>
+          <text class="node-label" x="175" y="305" text-anchor="end">C# / .NET</text>
+
+          <circle class="node-dot" cx="140" cy="115" r="7"/>
+          <text class="node-label" x="130" y="105" text-anchor="end">APIS / POSTMAN</text>
+
+          <circle class="node-center" cx="320" cy="170" r="32"/>
+          <text class="node-center-text" x="320" y="175" text-anchor="middle">JC</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">01 · About</div>
+        <h2>Grounded in fundamentals, building toward cloud &amp; security.</h2>
+      </div>
+      <div class="about-header">
+        <div class="photo-frame">
+          <img src="profile.jpg" alt="Jagapathi profile photo" style="display:block; width:100%; height:100%; object-fit:cover;">
+        </div>
+      </div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I'm a <strong>Computer Science engineering graduate</strong> with hands-on depth in
+            <strong>MS SQL Server</strong> — schema design, stored procedures, query optimization,
+            and analytical reporting — paired with backend development in <strong>C# and ASP.NET Core</strong>,
+            including dependency injection, the repository pattern, and Entity Framework Core.
+          </p>
+          <p>
+            I test and design APIs with <strong>Postman</strong> as part of my regular workflow, and I'm
+            building toward <strong>cloud infrastructure</strong> (Azure networking — VNet peering,
+            gateway transit, hub-spoke topology) and <strong>cybersecurity</strong>, with particular
+            interest in the intersection of software and industrial/OT environments.
+          </p>
+        </div>
+        <div class="fact-list">
+          <div class="fact"><span class="k">Education</span><span class="v">B.E./B.Tech — CS</span></div>
+          <div class="fact"><span class="k">Database</span><span class="v">MS SQL Server, MySQL</span></div>
+          <div class="fact"><span class="k">Backend</span><span class="v">C#, ASP.NET Core, EF Core</span></div>
+          <div class="fact"><span class="k">Tooling</span><span class="v">Postman, REST APIs, Git</span></div>
+          <div class="fact"><span class="k">Learning</span><span class="v">Azure (AZ-700), Security</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">02 · Education</div>
+        <h2>Education.</h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-top">
+            <div>
+              <div class="timeline-title">B.Tech / B.E. — Computer Science Engineering</div>
+              <div class="timeline-org">GITAM UNIVERSITY</div>
+            </div>
+            <div class="timeline-date">2020 — 2024</div>
+          </div>
+          <div class="timeline-desc">
+            Add relevant coursework, CGPA, honors, or major projects here.
+            <ul>
+              <li>Relevant coursework: Data Structures, DBMS, Networking</li>
+              <li>Notable project or thesis title, if applicable</li>
+            </ul>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-top">
+            <div>
+              <div class="timeline-title">Intermediate</div>
+              <div class="timeline-org">Sri Chaitanya Junior College</div>
+            </div>
+            <div class="timeline-date">2018 — 2020</div>
+          </div>
+          <div class="timeline-desc">8.28 CGPA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag"> Experience</div>
+        <h2>Experience.</h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-top">
+            <div>
+              <div class="timeline-title">Job Title</div>
+              <div class="timeline-org">Company Name</div>
+            </div>
+            <div class="timeline-date">Mon 20XX — Present</div>
+          </div>
+          <div class="timeline-desc">
+            One-line summary of your role and scope.
+            <ul>
+              <li>Key responsibility or achievement, quantified where possible</li>
+              <li>Another key contribution</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERNSHIPS -->
+  <section id="internships">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">04 · Internships</div>
+        <h2>Internships.</h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-top">
+            <div>
+              <div class="timeline-title">Apprentice / Intern Title</div>
+              <div class="timeline-org">Organization Name</div>
+            </div>
+            <div class="timeline-date">Mon 20XX — Mon 20XX</div>
+          </div>
+          <div class="timeline-desc">
+            Brief description of the internship and what it focused on.
+            <ul>
+              <li>Task or project you contributed to</li>
+              <li>Tools or technologies used</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certifications">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">05 · Certifications</div>
+        <h2>Certifications.</h2>
+      </div>
+      <div class="cert-grid">
+        <div class="cert-card">
+          <div class="cert-badge">AZ</div>
+          <div class="cert-info">
+            <h3>Certification Title</h3>
+            <div class="issuer">Issuing Organization</div>
+            <span class="date">Earned · Mon 20XX</span>
+          </div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-badge">✓</div>
+          <div class="cert-info">
+            <h3>Certification Title</h3>
+            <div class="issuer">Issuing Organization</div>
+            <span class="date">Earned · Mon 20XX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">06 · Skills</div>
+        <h2>Core stack.</h2>
+        <p class="section-desc">What I work with day to day.</p>
+      </div>
+      <div class="skill-grid">
+        <div class="skill-plate">
+          <div class="label">Cloud</div>
+          <h3>Azure Fundamentals</h3>
+          <p>Networking, VNet peering, hub-spoke topology, IaaS/PaaS/SaaS concepts.</p>
+        </div>
+        <div class="skill-plate">
+          <div class="label">Security</div>
+          <h3>Cybersecurity</h3>
+          <p>CIA Triad, network security fundamentals, OT/industrial security awareness.</p>
+        </div>
+        <div class="skill-plate">
+          <div class="label">Database</div>
+          <h3>MS SQL Server</h3>
+          <p>Schema design, stored procedures, CTEs, transactions, query optimization.</p>
+        </div>
+        <div class="skill-plate">
+          <div class="label">Backend</div>
+          <h3>C# / .NET</h3>
+          <p>ASP.NET Core Web API, dependency injection, repository pattern, EF Core.</p>
+        </div>
+        <div class="skill-plate">
+          <div class="label">Integration</div>
+          <h3>API Design</h3>
+          <p>REST API design, request/response debugging, integration testing.</p>
+        </div>
+        <div class="skill-plate">
+          <div class="label">Testing</div>
+          <h3>Postman</h3>
+          <p>Collections, environments, automated test scripts for API validation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">07 · Projects</div>
+        <h2>Selected work.</h2>
+        <p class="section-desc">Replace these cards with your real projects — repo links, live demos, and a one-line summary of the problem each one solves.</p>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-status">Project 01</div>
+          <h3>Inventory Management System</h3>
+          <p>SQL Server schema with reorder-suggestion views and stored procedures for automated stock alerts.</p>
+          <div class="tag-row"><span class="tag">SQL Server</span><span class="tag">T-SQL</span><span class="tag">Views</span></div>
+          <a href="#" class="project-link">View on GitHub →</a>
+        </div>
+        <div class="project-card">
+          <div class="project-status">Project 02</div>
+          <h3>ASP.NET Core Web API</h3>
+          <p>REST API built with EF Core and the repository pattern, tested end-to-end with Postman collections.</p>
+          <div class="tag-row"><span class="tag">C#</span><span class="tag">.NET Core</span><span class="tag">Postman</span></div>
+          <a href="#" class="project-link">View on GitHub →</a>
+        </div>
+        <div class="project-card">
+          <div class="project-status">Project 03</div>
+          <h3>E-Commerce Analytics Schema</h3>
+          <p>Cart abandonment and conversion funnel analysis using CTEs, self-joins, and conditional aggregation.</p>
+          <div class="tag-row"><span class="tag">SQL</span><span class="tag">Analytics</span></div>
+          <a href="#" class="project-link">View on GitHub →</a>
+        </div>
+        <div class="project-card">
+          <div class="project-status">Project 04</div>
+          <h3>Add your next project</h3>
+          <p>A cloud or security-focused build is a strong next addition here as you complete your Azure learning.</p>
+          <div class="tag-row"><span class="tag">Azure</span><span class="tag">Security</span></div>
+          <a href="#" class="project-link">View on GitHub →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">08 · Contact</div>
+        <h2>Let's talk.</h2>
+        <p class="section-desc">Open to Associate Software Engineer and cloud/backend roles. Fill out the form or reach out directly.</p>
+      </div>
+
+      <div class="contact-card brackets">
+        <span class="bl"></span><span class="br"></span>
+        <form id="contact-form" action="mailto:youremail@example.com" method="post" enctype="text/plain">
+          <div class="field-row">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" required>
+          </div>
+          <div class="field-row">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required>
+          </div>
+          <div class="field-row">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" placeholder="What would you like to talk about?" required></textarea>
+          </div>
+          <div class="send-row">
+            <button type="submit" class="btn btn-primary">Send message</button>
+            <span style="font-family:var(--font-mono); font-size:11px; color:var(--ink-muted);">→ opens your email client</span>
+          </div>
+        </form>
+      </div>
+
+      <div class="direct-links">
+        <a href="mailto:youremail@example.com">Email</a>
+        <a href="https://github.com/Jagapathi-Babu7-Chollangi" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© <span id="year"></span> Jagapathi — built &amp; hosted on GitHub Pages</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
